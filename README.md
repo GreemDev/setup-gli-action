@@ -5,7 +5,8 @@
 ![Check dist/](https://github.com/GreemDev/setup-gli-action/actions/workflows/check-dist.yml/badge.svg)
 ![CodeQL](https://github.com/GreemDev/setup-gli-action/actions/workflows/codeql-analysis.yml/badge.svg)
 
-This action installs a version of [GLI](https://github.com/GreemDev/GLI) for use in your GitHub/Gitea/Forgejo Actions workflows. 
+This action installs a version of [GLI](https://github.com/GreemDev/GLI)
+for use in your GitHub/Gitea/Forgejo Actions workflows.
 It is automatically added to the PATH.
 
 ## Usage
