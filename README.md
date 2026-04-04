@@ -22,7 +22,8 @@ See [action.yml](action.yml).
     # Specific version of GLI to use; do not specify for latest release.
     version: '3.0.4'
 
-    # GitHub token for authentication. You only need this if you're hitting ratelimits; GLI is not a private repo.
+    # GitHub token for authentication. You only need this
+    # if you're hitting ratelimits; GLI is not a private repo.
     token: ${{ github.token }}
 ```
 
