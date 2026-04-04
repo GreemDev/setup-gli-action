@@ -33097,7 +33097,7 @@ const defaults = {
 };
 const GitHub = Octokit.plugin(restEndpointMethods, paginateRest).defaults(defaults);
 /**
- * Convience function to correctly format Octokit Options to pass into the constructor.
+ * Convenience function to correctly format Octokit Options to pass into the constructor.
  *
  * @param     token    the repo PAT or GITHUB_TOKEN
  * @param     options  other options to set
@@ -33600,14 +33600,15 @@ function requireDetectLibc () {
 
 var detectLibcExports = requireDetectLibc();
 
-const PLATFORM_FILE_EXTENSION = (() => {
+const isWindows = (() => {
     switch (platform()) {
         case 'win32':
-            return '.exe';
+            return true;
         default:
-            return '';
+            return false;
     }
 })();
+const PLATFORM_FILE_EXTENSION = isWindows ? '.exe' : '';
 /**
  * A properly formed string for concatenation for finding an asset to download.
  *
@@ -33735,14 +33736,19 @@ async function run() {
             debug(`Found GLI installation; overwriting`);
             fs$1.rmSync(outPath);
         }
-        const gliStream = fs$1.createWriteStream(join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`), { flags: 'wx', autoClose: true });
+        const gliStream = fs$1.createWriteStream(join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`), { flags: 'wx', autoClose: false });
         await download(foundAsset.browser_download_url, gliStream).catch((error) => {
             const err = `An error occurred requesting to download GLI: ${error.message}`;
             setFailed(err);
             throw new Error(err);
         });
         addPath(parentDir);
-        setOutput('path', gliStream.path);
+        const outputPath = gliStream.path;
+        gliStream.close();
+        setOutput('path', outputPath);
+        if (!isWindows) {
+            fs$1.chmodSync(outputPath, 0o775);
+        }
     }
     catch (error) {
         if (error instanceof Error)

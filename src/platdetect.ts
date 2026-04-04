@@ -1,14 +1,16 @@
 import { arch, platform } from 'os'
 import * as libc from 'detect-libc'
 
-export const PLATFORM_FILE_EXTENSION: string = (() => {
+export const isWindows: boolean = (() => {
   switch (platform()) {
     case 'win32':
-      return '.exe'
+      return true
     default:
-      return ''
+      return false
   }
 })()
+
+export const PLATFORM_FILE_EXTENSION: string = isWindows ? '.exe' : ''
 
 /**
  * A properly formed string for concatenation for finding an asset to download.

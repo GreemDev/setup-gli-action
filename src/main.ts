@@ -5,6 +5,7 @@ import { join } from 'node:path'
 import { getOctokit } from './octokit.js'
 import { CoreInputs } from './inputs.js'
 import {
+  isWindows,
   PLATFORM_FILE_EXTENSION,
   REQUIRED_GLI_BINARY_NAME
 } from './platdetect.js'
@@ -77,7 +78,7 @@ export async function run(): Promise<void> {
 
     const gliStream = fs.createWriteStream(
       join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`),
-      { flags: 'wx', autoClose: true }
+      { flags: 'wx', autoClose: false }
     )
 
     await download(foundAsset.browser_download_url, gliStream).catch(
@@ -90,7 +91,14 @@ export async function run(): Promise<void> {
 
     core.addPath(parentDir)
 
-    core.setOutput('path', gliStream.path)
+    const outputPath = gliStream.path
+    gliStream.close()
+
+    core.setOutput('path', outputPath)
+
+    if (!isWindows) {
+      fs.chmodSync(outputPath, 0o775)
+    }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
