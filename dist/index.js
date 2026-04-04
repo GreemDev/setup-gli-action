@@ -33648,6 +33648,7 @@ const REQUIRED_GLI_BINARY_NAME = (() => {
     return `gli-${PLATFORM_OS_IDENTIFIER}-${PLATFORM_ARCH_IDENTIFIER}${PLATFORM_FILE_EXTENSION}`;
 })();
 
+// from https://github.com/terascope/fetch-github-release/blob/master/src/download.ts
 const { GITHUB_TOKEN } = process.env;
 function getRequestOptions(urlString) {
     const url = require$$1$3.parse(urlString);
