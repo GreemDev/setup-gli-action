@@ -23,7 +23,7 @@ inputs:
 
 # Define your outputs here.
 outputs:
-  path:
+  tool_path:
     description:
       "The resulting path of the GLI installation. It is also added to PATH, so
       later steps just need to invoke 'gli'."

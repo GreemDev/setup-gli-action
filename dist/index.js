@@ -33736,18 +33736,24 @@ async function run() {
             debug(`Found GLI installation; overwriting`);
             fs$1.rmSync(outPath);
         }
-        const gliStream = fs$1.createWriteStream(join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`), { flags: 'wx', autoClose: false });
+        const gliStream = fs$1.createWriteStream(join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`), { flags: 'wx', autoClose: true });
         await download(foundAsset.browser_download_url, gliStream).catch((error) => {
-            const err = `An error occurred requesting to download GLI: ${error.message}`;
-            setFailed(err);
+            let err = 'An error occurred requesting to download GLI: ';
+            if (error instanceof AggregateError) {
+                err += '\n';
+                error.errors.forEach((e) => {
+                    err += `${e.message}\n`;
+                });
+            }
+            else if (error instanceof Error) {
+                err += error.message;
+            }
             throw new Error(err);
         });
         addPath(parentDir);
-        const outputPath = gliStream.path;
-        gliStream.close();
-        setOutput('path', outputPath);
+        setOutput('tool_path', gliStream.path);
         if (!isWindows) {
-            fs$1.chmodSync(outputPath, 0o775);
+            fs$1.chmodSync(gliStream.path, 0o775);
         }
     }
     catch (error) {
