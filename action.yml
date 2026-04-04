@@ -1,6 +1,7 @@
-name: "Setup GLI"
-description: "Setup your workflow with a version of the GLI command-line utility."
-author: "GreemDev"
+name: 'Setup GLI'
+description:
+  'Setup your workflow with a version of the GLI command-line utility.'
+author: 'GreemDev'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
@@ -10,17 +11,22 @@ branding:
 # Define your inputs here.
 inputs:
   version:
-    description: "Provide a specific version, or 'latest', to install. Providing a non-existent version will cause a workflow failure."
+    description:
+      "Provide a specific version, or 'latest', to install. Providing a
+      non-existent version will cause a workflow failure."
     required: false
     default: 'latest'
   token:
-    description: 'The GitHub token to use for auth, if you are experiencing ratelimiting.'
+    description:
+      'The GitHub token to use for auth, if you are experiencing ratelimiting.'
     required: false
 
 # Define your outputs here.
 outputs:
   path:
-    description: "The resulting path of the GLI installation. It is also added to PATH, so later steps just need to invoke 'gli'."
+    description:
+      "The resulting path of the GLI installation. It is also added to PATH, so
+      later steps just need to invoke 'gli'."
 
 runs:
   using: node24
