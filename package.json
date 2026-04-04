@@ -1,17 +1,17 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
-  "author": "",
+  "name": "setup-gli-action",
+  "description": "Setup your workflow with a version of the GLI command-line utility.",
+  "version": "1.0.0",
+  "author": "GreemDev",
   "type": "module",
-  "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "private": false,
+  "homepage": "https://github.com/GreemDev/setup-gli-action",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/GreemDev/setup-gli-action.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/GreemDev/setup-gli-action/issues"
   },
   "keywords": [
     "actions"
@@ -37,7 +37,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^3.0.0"
+    "@actions/core": "^3.0.0",
+    "detect-libc": "^2.1.2"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.4",
