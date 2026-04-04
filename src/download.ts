@@ -1,3 +1,5 @@
+// from https://github.com/terascope/fetch-github-release/blob/master/src/download.ts
+
 import http from 'node:http'
 import https from 'node:https'
 import { Writable } from 'node:stream'
