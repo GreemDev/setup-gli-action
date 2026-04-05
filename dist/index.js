@@ -33729,7 +33729,10 @@ async function run() {
             debug(`Found asset: ${foundAsset.name}`);
         }
         info(`Found asset ${foundAsset.name}`);
-        const parentDir = join(process$1.env['HOME'], '.bin');
+        const home = isWindows
+            ? join(process$1.env['SystemDrive'], process$1.env['HOMEPATH'])
+            : process$1.env['HOME'];
+        const parentDir = join(home, '.bin');
         mkdirP(parentDir);
         const outPath = join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`);
         if (fs$1.existsSync(outPath)) {

@@ -65,7 +65,11 @@ export async function run(): Promise<void> {
 
     core.info(`Found asset ${foundAsset.name}`)
 
-    const parentDir = join(process.env['HOME']!, '.bin')
+    const home = isWindows
+      ? join(process.env['SystemDrive']!, process.env['HOMEPATH']!)
+      : process.env['HOME']!
+
+    const parentDir = join(home, '.bin')
 
     io.mkdirP(parentDir)
 
