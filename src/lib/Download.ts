@@ -3,12 +3,12 @@
 import http from 'node:http'
 import https from 'node:https'
 import { Writable } from 'node:stream'
-import URL from 'node:url'
+import * as Url from 'node:url'
 
 const { GITHUB_TOKEN } = process.env
 
 function getRequestOptions(urlString: string) {
-  const url = URL.parse(urlString)
+  const url = Url.parse(urlString)
   const headers: Record<string, string> = {
     Accept: 'application/octet-stream',
     'User-Agent': '@GreemDev/setup-gli-action'

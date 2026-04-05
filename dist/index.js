@@ -9,7 +9,7 @@ import http__default from 'http';
 import * as https from 'https';
 import https__default from 'https';
 import 'net';
-import require$$1 from 'tls';
+import require$$1$1 from 'tls';
 import events$1 from 'events';
 import { ok } from 'assert';
 import require$$6 from 'util';
@@ -23,11 +23,12 @@ import require$$7 from 'node:querystring';
 import require$$8 from 'node:events';
 import require$$0$5 from 'node:diagnostics_channel';
 import require$$5 from 'node:tls';
-import require$$1$2 from 'node:zlib';
+import require$$1$3 from 'node:zlib';
 import require$$5$1 from 'node:perf_hooks';
 import require$$8$1 from 'node:util/types';
-import require$$1$1 from 'node:worker_threads';
-import require$$1$3 from 'node:url';
+import require$$1$2 from 'node:worker_threads';
+import * as require$$1 from 'node:url';
+import require$$1__default from 'node:url';
 import require$$5$2 from 'node:async_hooks';
 import require$$1$4 from 'node:console';
 import require$$1$5 from 'node:dns';
@@ -35,9 +36,9 @@ import require$$5$3 from 'string_decoder';
 import child from 'child_process';
 import 'timers';
 import * as fs$1 from 'node:fs';
+import https$1 from 'node:https';
 import { join } from 'node:path';
 import * as process$1 from 'node:process';
-import https$1 from 'node:https';
 
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -289,7 +290,7 @@ var hasRequiredTunnel$1;
 function requireTunnel$1 () {
 	if (hasRequiredTunnel$1) return tunnel$1;
 	hasRequiredTunnel$1 = 1;
-	var tls = require$$1;
+	var tls = require$$1$1;
 	var http = http__default;
 	var https = https__default;
 	var events = events$1;
@@ -4905,7 +4906,7 @@ function requireWebidl () {
 	hasRequiredWebidl = 1;
 
 	const { types, inspect } = require$$0$4;
-	const { markAsUncloneable } = require$$1$1;
+	const { markAsUncloneable } = require$$1$2;
 	const { toUSVString } = requireUtil$7();
 
 	/** @type {import('../../../types/webidl').Webidl} */
@@ -5608,7 +5609,7 @@ function requireUtil$6 () {
 	hasRequiredUtil$6 = 1;
 
 	const { Transform } = require$$0$2;
-	const zlib = require$$1$2;
+	const zlib = require$$1$3;
 	const { redirectStatusSet, referrerPolicySet: referrerPolicyTokens, badPortsSet } = requireConstants$2();
 	const { getGlobalOrigin } = requireGlobal$1();
 	const { collectASequenceOfCodePoints, collectAnHTTPQuotedString, removeChars, parseMIMEType } = requireDataUrl();
@@ -12521,7 +12522,7 @@ function requireProxyAgent () {
 	hasRequiredProxyAgent = 1;
 
 	const { kProxy, kClose, kDestroy, kDispatch, kInterceptors } = requireSymbols$4();
-	const { URL } = require$$1$3;
+	const { URL } = require$$1__default;
 	const Agent = requireAgent();
 	const Pool = requirePool();
 	const DispatcherBase = requireDispatcherBase();
@@ -19044,7 +19045,7 @@ function requireFetch () {
 	} = requireResponse();
 	const { HeadersList } = requireHeaders();
 	const { Request, cloneRequest } = requireRequest();
-	const zlib = require$$1$2;
+	const zlib = require$$1$3;
 	const {
 	  bytesMatch,
 	  makePolicyContainer,
@@ -24315,7 +24316,7 @@ function requireEvents () {
 	const { webidl } = requireWebidl();
 	const { kEnumerableProperty } = requireUtil$7();
 	const { kConstruct } = requireSymbols$4();
-	const { MessagePort } = require$$1$1;
+	const { MessagePort } = require$$1$2;
 
 	/**
 	 * @see https://html.spec.whatwg.org/multipage/comms.html#messageevent
@@ -25545,7 +25546,7 @@ function requirePermessageDeflate () {
 	if (hasRequiredPermessageDeflate) return permessageDeflate;
 	hasRequiredPermessageDeflate = 1;
 
-	const { createInflateRaw, Z_DEFAULT_WINDOWBITS } = require$$1$2;
+	const { createInflateRaw, Z_DEFAULT_WINDOWBITS } = require$$1$3;
 	const { isValidClientWindowBits } = requireUtil$1();
 
 	const tail = Buffer.from([0x00, 0x00, 0xff, 0xff]);
@@ -28752,6 +28753,548 @@ function error(message, properties = {}) {
  */
 function info(message) {
     process.stdout.write(message + os.EOL);
+}
+
+var process_1;
+var hasRequiredProcess;
+
+function requireProcess () {
+	if (hasRequiredProcess) return process_1;
+	hasRequiredProcess = 1;
+
+	const isLinux = () => process.platform === 'linux';
+
+	let report = null;
+	const getReport = () => {
+	  if (!report) {
+	    /* istanbul ignore next */
+	    if (isLinux() && process.report) {
+	      const orig = process.report.excludeNetwork;
+	      process.report.excludeNetwork = true;
+	      report = process.report.getReport();
+	      process.report.excludeNetwork = orig;
+	    } else {
+	      report = {};
+	    }
+	  }
+	  return report;
+	};
+
+	process_1 = { isLinux, getReport };
+	return process_1;
+}
+
+var filesystem;
+var hasRequiredFilesystem;
+
+function requireFilesystem () {
+	if (hasRequiredFilesystem) return filesystem;
+	hasRequiredFilesystem = 1;
+
+	const fs = fs__default;
+
+	const LDD_PATH = '/usr/bin/ldd';
+	const SELF_PATH = '/proc/self/exe';
+	const MAX_LENGTH = 2048;
+
+	/**
+	 * Read the content of a file synchronous
+	 *
+	 * @param {string} path
+	 * @returns {Buffer}
+	 */
+	const readFileSync = (path) => {
+	  const fd = fs.openSync(path, 'r');
+	  const buffer = Buffer.alloc(MAX_LENGTH);
+	  const bytesRead = fs.readSync(fd, buffer, 0, MAX_LENGTH, 0);
+	  fs.close(fd, () => {});
+	  return buffer.subarray(0, bytesRead);
+	};
+
+	/**
+	 * Read the content of a file
+	 *
+	 * @param {string} path
+	 * @returns {Promise<Buffer>}
+	 */
+	const readFile = (path) => new Promise((resolve, reject) => {
+	  fs.open(path, 'r', (err, fd) => {
+	    if (err) {
+	      reject(err);
+	    } else {
+	      const buffer = Buffer.alloc(MAX_LENGTH);
+	      fs.read(fd, buffer, 0, MAX_LENGTH, 0, (_, bytesRead) => {
+	        resolve(buffer.subarray(0, bytesRead));
+	        fs.close(fd, () => {});
+	      });
+	    }
+	  });
+	});
+
+	filesystem = {
+	  LDD_PATH,
+	  SELF_PATH,
+	  readFileSync,
+	  readFile
+	};
+	return filesystem;
+}
+
+var elf;
+var hasRequiredElf;
+
+function requireElf () {
+	if (hasRequiredElf) return elf;
+	hasRequiredElf = 1;
+
+	const interpreterPath = (elf) => {
+	  if (elf.length < 64) {
+	    return null;
+	  }
+	  if (elf.readUInt32BE(0) !== 0x7F454C46) {
+	    // Unexpected magic bytes
+	    return null;
+	  }
+	  if (elf.readUInt8(4) !== 2) {
+	    // Not a 64-bit ELF
+	    return null;
+	  }
+	  if (elf.readUInt8(5) !== 1) {
+	    // Not little-endian
+	    return null;
+	  }
+	  const offset = elf.readUInt32LE(32);
+	  const size = elf.readUInt16LE(54);
+	  const count = elf.readUInt16LE(56);
+	  for (let i = 0; i < count; i++) {
+	    const headerOffset = offset + (i * size);
+	    const type = elf.readUInt32LE(headerOffset);
+	    if (type === 3) {
+	      const fileOffset = elf.readUInt32LE(headerOffset + 8);
+	      const fileSize = elf.readUInt32LE(headerOffset + 32);
+	      return elf.subarray(fileOffset, fileOffset + fileSize).toString().replace(/\0.*$/g, '');
+	    }
+	  }
+	  return null;
+	};
+
+	elf = {
+	  interpreterPath
+	};
+	return elf;
+}
+
+var detectLibc;
+var hasRequiredDetectLibc;
+
+function requireDetectLibc () {
+	if (hasRequiredDetectLibc) return detectLibc;
+	hasRequiredDetectLibc = 1;
+
+	const childProcess = child;
+	const { isLinux, getReport } = requireProcess();
+	const { LDD_PATH, SELF_PATH, readFile, readFileSync } = requireFilesystem();
+	const { interpreterPath } = requireElf();
+
+	let cachedFamilyInterpreter;
+	let cachedFamilyFilesystem;
+	let cachedVersionFilesystem;
+
+	const command = 'getconf GNU_LIBC_VERSION 2>&1 || true; ldd --version 2>&1 || true';
+	let commandOut = '';
+
+	const safeCommand = () => {
+	  if (!commandOut) {
+	    return new Promise((resolve) => {
+	      childProcess.exec(command, (err, out) => {
+	        commandOut = err ? ' ' : out;
+	        resolve(commandOut);
+	      });
+	    });
+	  }
+	  return commandOut;
+	};
+
+	const safeCommandSync = () => {
+	  if (!commandOut) {
+	    try {
+	      commandOut = childProcess.execSync(command, { encoding: 'utf8' });
+	    } catch (_err) {
+	      commandOut = ' ';
+	    }
+	  }
+	  return commandOut;
+	};
+
+	/**
+	 * A String constant containing the value `glibc`.
+	 * @type {string}
+	 * @public
+	 */
+	const GLIBC = 'glibc';
+
+	/**
+	 * A Regexp constant to get the GLIBC Version.
+	 * @type {string}
+	 */
+	const RE_GLIBC_VERSION = /LIBC[a-z0-9 \-).]*?(\d+\.\d+)/i;
+
+	/**
+	 * A String constant containing the value `musl`.
+	 * @type {string}
+	 * @public
+	 */
+	const MUSL = 'musl';
+
+	const isFileMusl = (f) => f.includes('libc.musl-') || f.includes('ld-musl-');
+
+	const familyFromReport = () => {
+	  const report = getReport();
+	  if (report.header && report.header.glibcVersionRuntime) {
+	    return GLIBC;
+	  }
+	  if (Array.isArray(report.sharedObjects)) {
+	    if (report.sharedObjects.some(isFileMusl)) {
+	      return MUSL;
+	    }
+	  }
+	  return null;
+	};
+
+	const familyFromCommand = (out) => {
+	  const [getconf, ldd1] = out.split(/[\r\n]+/);
+	  if (getconf && getconf.includes(GLIBC)) {
+	    return GLIBC;
+	  }
+	  if (ldd1 && ldd1.includes(MUSL)) {
+	    return MUSL;
+	  }
+	  return null;
+	};
+
+	const familyFromInterpreterPath = (path) => {
+	  if (path) {
+	    if (path.includes('/ld-musl-')) {
+	      return MUSL;
+	    } else if (path.includes('/ld-linux-')) {
+	      return GLIBC;
+	    }
+	  }
+	  return null;
+	};
+
+	const getFamilyFromLddContent = (content) => {
+	  content = content.toString();
+	  if (content.includes('musl')) {
+	    return MUSL;
+	  }
+	  if (content.includes('GNU C Library')) {
+	    return GLIBC;
+	  }
+	  return null;
+	};
+
+	const familyFromFilesystem = async () => {
+	  if (cachedFamilyFilesystem !== undefined) {
+	    return cachedFamilyFilesystem;
+	  }
+	  cachedFamilyFilesystem = null;
+	  try {
+	    const lddContent = await readFile(LDD_PATH);
+	    cachedFamilyFilesystem = getFamilyFromLddContent(lddContent);
+	  } catch (e) {}
+	  return cachedFamilyFilesystem;
+	};
+
+	const familyFromFilesystemSync = () => {
+	  if (cachedFamilyFilesystem !== undefined) {
+	    return cachedFamilyFilesystem;
+	  }
+	  cachedFamilyFilesystem = null;
+	  try {
+	    const lddContent = readFileSync(LDD_PATH);
+	    cachedFamilyFilesystem = getFamilyFromLddContent(lddContent);
+	  } catch (e) {}
+	  return cachedFamilyFilesystem;
+	};
+
+	const familyFromInterpreter = async () => {
+	  if (cachedFamilyInterpreter !== undefined) {
+	    return cachedFamilyInterpreter;
+	  }
+	  cachedFamilyInterpreter = null;
+	  try {
+	    const selfContent = await readFile(SELF_PATH);
+	    const path = interpreterPath(selfContent);
+	    cachedFamilyInterpreter = familyFromInterpreterPath(path);
+	  } catch (e) {}
+	  return cachedFamilyInterpreter;
+	};
+
+	const familyFromInterpreterSync = () => {
+	  if (cachedFamilyInterpreter !== undefined) {
+	    return cachedFamilyInterpreter;
+	  }
+	  cachedFamilyInterpreter = null;
+	  try {
+	    const selfContent = readFileSync(SELF_PATH);
+	    const path = interpreterPath(selfContent);
+	    cachedFamilyInterpreter = familyFromInterpreterPath(path);
+	  } catch (e) {}
+	  return cachedFamilyInterpreter;
+	};
+
+	/**
+	 * Resolves with the libc family when it can be determined, `null` otherwise.
+	 * @returns {Promise<?string>}
+	 */
+	const family = async () => {
+	  let family = null;
+	  if (isLinux()) {
+	    family = await familyFromInterpreter();
+	    if (!family) {
+	      family = await familyFromFilesystem();
+	      if (!family) {
+	        family = familyFromReport();
+	      }
+	      if (!family) {
+	        const out = await safeCommand();
+	        family = familyFromCommand(out);
+	      }
+	    }
+	  }
+	  return family;
+	};
+
+	/**
+	 * Returns the libc family when it can be determined, `null` otherwise.
+	 * @returns {?string}
+	 */
+	const familySync = () => {
+	  let family = null;
+	  if (isLinux()) {
+	    family = familyFromInterpreterSync();
+	    if (!family) {
+	      family = familyFromFilesystemSync();
+	      if (!family) {
+	        family = familyFromReport();
+	      }
+	      if (!family) {
+	        const out = safeCommandSync();
+	        family = familyFromCommand(out);
+	      }
+	    }
+	  }
+	  return family;
+	};
+
+	/**
+	 * Resolves `true` only when the platform is Linux and the libc family is not `glibc`.
+	 * @returns {Promise<boolean>}
+	 */
+	const isNonGlibcLinux = async () => isLinux() && await family() !== GLIBC;
+
+	/**
+	 * Returns `true` only when the platform is Linux and the libc family is not `glibc`.
+	 * @returns {boolean}
+	 */
+	const isNonGlibcLinuxSync = () => isLinux() && familySync() !== GLIBC;
+
+	const versionFromFilesystem = async () => {
+	  if (cachedVersionFilesystem !== undefined) {
+	    return cachedVersionFilesystem;
+	  }
+	  cachedVersionFilesystem = null;
+	  try {
+	    const lddContent = await readFile(LDD_PATH);
+	    const versionMatch = lddContent.match(RE_GLIBC_VERSION);
+	    if (versionMatch) {
+	      cachedVersionFilesystem = versionMatch[1];
+	    }
+	  } catch (e) {}
+	  return cachedVersionFilesystem;
+	};
+
+	const versionFromFilesystemSync = () => {
+	  if (cachedVersionFilesystem !== undefined) {
+	    return cachedVersionFilesystem;
+	  }
+	  cachedVersionFilesystem = null;
+	  try {
+	    const lddContent = readFileSync(LDD_PATH);
+	    const versionMatch = lddContent.match(RE_GLIBC_VERSION);
+	    if (versionMatch) {
+	      cachedVersionFilesystem = versionMatch[1];
+	    }
+	  } catch (e) {}
+	  return cachedVersionFilesystem;
+	};
+
+	const versionFromReport = () => {
+	  const report = getReport();
+	  if (report.header && report.header.glibcVersionRuntime) {
+	    return report.header.glibcVersionRuntime;
+	  }
+	  return null;
+	};
+
+	const versionSuffix = (s) => s.trim().split(/\s+/)[1];
+
+	const versionFromCommand = (out) => {
+	  const [getconf, ldd1, ldd2] = out.split(/[\r\n]+/);
+	  if (getconf && getconf.includes(GLIBC)) {
+	    return versionSuffix(getconf);
+	  }
+	  if (ldd1 && ldd2 && ldd1.includes(MUSL)) {
+	    return versionSuffix(ldd2);
+	  }
+	  return null;
+	};
+
+	/**
+	 * Resolves with the libc version when it can be determined, `null` otherwise.
+	 * @returns {Promise<?string>}
+	 */
+	const version = async () => {
+	  let version = null;
+	  if (isLinux()) {
+	    version = await versionFromFilesystem();
+	    if (!version) {
+	      version = versionFromReport();
+	    }
+	    if (!version) {
+	      const out = await safeCommand();
+	      version = versionFromCommand(out);
+	    }
+	  }
+	  return version;
+	};
+
+	/**
+	 * Returns the libc version when it can be determined, `null` otherwise.
+	 * @returns {?string}
+	 */
+	const versionSync = () => {
+	  let version = null;
+	  if (isLinux()) {
+	    version = versionFromFilesystemSync();
+	    if (!version) {
+	      version = versionFromReport();
+	    }
+	    if (!version) {
+	      const out = safeCommandSync();
+	      version = versionFromCommand(out);
+	    }
+	  }
+	  return version;
+	};
+
+	detectLibc = {
+	  GLIBC,
+	  MUSL,
+	  family,
+	  familySync,
+	  isNonGlibcLinux,
+	  isNonGlibcLinuxSync,
+	  version,
+	  versionSync
+	};
+	return detectLibc;
+}
+
+var detectLibcExports = requireDetectLibc();
+
+const isWindows = (() => {
+    switch (platform()) {
+        case 'win32':
+            return true;
+        default:
+            return false;
+    }
+})();
+const PLATFORM_FILE_EXTENSION = isWindows ? '.exe' : '';
+/**
+ * A properly formed string for concatenation for finding an asset to download.
+ *
+ * Undefined on platforms GLI does not support installation on.
+ */
+const PLATFORM_OS_IDENTIFIER = (() => {
+    switch (platform()) {
+        case 'darwin':
+            return 'osx';
+        case 'win32':
+            return 'win';
+        case 'linux': {
+            return detectLibcExports.isNonGlibcLinuxSync() ? 'linux-musl' : 'linux';
+        }
+        default:
+            return undefined;
+    }
+})();
+/**
+ * A properly formed string for concatenation for finding an asset to download.
+ *
+ * Undefined on architectures GLI does not support installation on.
+ */
+const PLATFORM_ARCH_IDENTIFIER = (() => {
+    const a = arch();
+    switch (a) {
+        case 'arm':
+        case 'arm64':
+        case 'x64':
+            return a;
+        case 'ia32':
+            return 'x86';
+        default:
+            return undefined;
+    }
+})();
+const REQUIRED_GLI_BINARY_NAME = (() => {
+    return `gli-${PLATFORM_OS_IDENTIFIER}-${PLATFORM_ARCH_IDENTIFIER}${PLATFORM_FILE_EXTENSION}`;
+})();
+
+// from https://github.com/terascope/fetch-github-release/blob/master/src/download.ts
+const { GITHUB_TOKEN } = process.env;
+function getRequestOptions(urlString) {
+    const url = require$$1.parse(urlString);
+    const headers = {
+        Accept: 'application/octet-stream',
+        'User-Agent': '@GreemDev/setup-gli-action'
+    };
+    if (GITHUB_TOKEN) {
+        headers.Authorization = `token ${GITHUB_TOKEN}`;
+    }
+    return Object.assign({}, url, { headers });
+}
+function download(url, w, progress = () => { }) {
+    return new Promise((resolve, reject) => {
+        let protocol = /^https:/.exec(url) ? https$1 : require$$2;
+        const options = getRequestOptions(url);
+        progress(0);
+        protocol
+            .get(options, (res1) => {
+            protocol = /^https:/.exec(res1.headers.location) ? https$1 : require$$2;
+            protocol
+                .get(res1.headers.location, (res2) => {
+                const total = parseInt(res2.headers['content-length'] ?? '0', 10);
+                let completed = 0;
+                res2.pipe(w);
+                res2.on('data', (data) => {
+                    completed += data.length;
+                    progress(completed / total);
+                });
+                res2.on('progress', progress);
+                res2.on('error', reject);
+                res2.on('end', () => {
+                    w.on('close', () => {
+                        resolve();
+                    });
+                });
+            })
+                .on('error', reject);
+        })
+            .on('error', reject);
+    });
 }
 
 function getUserAgent() {
@@ -33142,558 +33685,59 @@ function getApiBaseUrl() {
     return process.env['GITHUB_API_URL'] || 'https://api.github.com';
 }
 
-class CoreInputs {
-    get version() {
+class Inputs {
+    static get version() {
         return getInput('version');
     }
-    get token() {
+    static get token() {
         return getInput('token');
     }
 }
 
-var process_1;
-var hasRequiredProcess;
-
-function requireProcess () {
-	if (hasRequiredProcess) return process_1;
-	hasRequiredProcess = 1;
-
-	const isLinux = () => process.platform === 'linux';
-
-	let report = null;
-	const getReport = () => {
-	  if (!report) {
-	    /* istanbul ignore next */
-	    if (isLinux() && process.report) {
-	      const orig = process.report.excludeNetwork;
-	      process.report.excludeNetwork = true;
-	      report = process.report.getReport();
-	      process.report.excludeNetwork = orig;
-	    } else {
-	      report = {};
-	    }
-	  }
-	  return report;
-	};
-
-	process_1 = { isLinux, getReport };
-	return process_1;
-}
-
-var filesystem;
-var hasRequiredFilesystem;
-
-function requireFilesystem () {
-	if (hasRequiredFilesystem) return filesystem;
-	hasRequiredFilesystem = 1;
-
-	const fs = fs__default;
-
-	const LDD_PATH = '/usr/bin/ldd';
-	const SELF_PATH = '/proc/self/exe';
-	const MAX_LENGTH = 2048;
-
-	/**
-	 * Read the content of a file synchronous
-	 *
-	 * @param {string} path
-	 * @returns {Buffer}
-	 */
-	const readFileSync = (path) => {
-	  const fd = fs.openSync(path, 'r');
-	  const buffer = Buffer.alloc(MAX_LENGTH);
-	  const bytesRead = fs.readSync(fd, buffer, 0, MAX_LENGTH, 0);
-	  fs.close(fd, () => {});
-	  return buffer.subarray(0, bytesRead);
-	};
-
-	/**
-	 * Read the content of a file
-	 *
-	 * @param {string} path
-	 * @returns {Promise<Buffer>}
-	 */
-	const readFile = (path) => new Promise((resolve, reject) => {
-	  fs.open(path, 'r', (err, fd) => {
-	    if (err) {
-	      reject(err);
-	    } else {
-	      const buffer = Buffer.alloc(MAX_LENGTH);
-	      fs.read(fd, buffer, 0, MAX_LENGTH, 0, (_, bytesRead) => {
-	        resolve(buffer.subarray(0, bytesRead));
-	        fs.close(fd, () => {});
-	      });
-	    }
-	  });
-	});
-
-	filesystem = {
-	  LDD_PATH,
-	  SELF_PATH,
-	  readFileSync,
-	  readFile
-	};
-	return filesystem;
-}
-
-var elf;
-var hasRequiredElf;
-
-function requireElf () {
-	if (hasRequiredElf) return elf;
-	hasRequiredElf = 1;
-
-	const interpreterPath = (elf) => {
-	  if (elf.length < 64) {
-	    return null;
-	  }
-	  if (elf.readUInt32BE(0) !== 0x7F454C46) {
-	    // Unexpected magic bytes
-	    return null;
-	  }
-	  if (elf.readUInt8(4) !== 2) {
-	    // Not a 64-bit ELF
-	    return null;
-	  }
-	  if (elf.readUInt8(5) !== 1) {
-	    // Not little-endian
-	    return null;
-	  }
-	  const offset = elf.readUInt32LE(32);
-	  const size = elf.readUInt16LE(54);
-	  const count = elf.readUInt16LE(56);
-	  for (let i = 0; i < count; i++) {
-	    const headerOffset = offset + (i * size);
-	    const type = elf.readUInt32LE(headerOffset);
-	    if (type === 3) {
-	      const fileOffset = elf.readUInt32LE(headerOffset + 8);
-	      const fileSize = elf.readUInt32LE(headerOffset + 32);
-	      return elf.subarray(fileOffset, fileOffset + fileSize).toString().replace(/\0.*$/g, '');
-	    }
-	  }
-	  return null;
-	};
-
-	elf = {
-	  interpreterPath
-	};
-	return elf;
-}
-
-var detectLibc;
-var hasRequiredDetectLibc;
-
-function requireDetectLibc () {
-	if (hasRequiredDetectLibc) return detectLibc;
-	hasRequiredDetectLibc = 1;
-
-	const childProcess = child;
-	const { isLinux, getReport } = requireProcess();
-	const { LDD_PATH, SELF_PATH, readFile, readFileSync } = requireFilesystem();
-	const { interpreterPath } = requireElf();
-
-	let cachedFamilyInterpreter;
-	let cachedFamilyFilesystem;
-	let cachedVersionFilesystem;
-
-	const command = 'getconf GNU_LIBC_VERSION 2>&1 || true; ldd --version 2>&1 || true';
-	let commandOut = '';
-
-	const safeCommand = () => {
-	  if (!commandOut) {
-	    return new Promise((resolve) => {
-	      childProcess.exec(command, (err, out) => {
-	        commandOut = err ? ' ' : out;
-	        resolve(commandOut);
-	      });
-	    });
-	  }
-	  return commandOut;
-	};
-
-	const safeCommandSync = () => {
-	  if (!commandOut) {
-	    try {
-	      commandOut = childProcess.execSync(command, { encoding: 'utf8' });
-	    } catch (_err) {
-	      commandOut = ' ';
-	    }
-	  }
-	  return commandOut;
-	};
-
-	/**
-	 * A String constant containing the value `glibc`.
-	 * @type {string}
-	 * @public
-	 */
-	const GLIBC = 'glibc';
-
-	/**
-	 * A Regexp constant to get the GLIBC Version.
-	 * @type {string}
-	 */
-	const RE_GLIBC_VERSION = /LIBC[a-z0-9 \-).]*?(\d+\.\d+)/i;
-
-	/**
-	 * A String constant containing the value `musl`.
-	 * @type {string}
-	 * @public
-	 */
-	const MUSL = 'musl';
-
-	const isFileMusl = (f) => f.includes('libc.musl-') || f.includes('ld-musl-');
-
-	const familyFromReport = () => {
-	  const report = getReport();
-	  if (report.header && report.header.glibcVersionRuntime) {
-	    return GLIBC;
-	  }
-	  if (Array.isArray(report.sharedObjects)) {
-	    if (report.sharedObjects.some(isFileMusl)) {
-	      return MUSL;
-	    }
-	  }
-	  return null;
-	};
-
-	const familyFromCommand = (out) => {
-	  const [getconf, ldd1] = out.split(/[\r\n]+/);
-	  if (getconf && getconf.includes(GLIBC)) {
-	    return GLIBC;
-	  }
-	  if (ldd1 && ldd1.includes(MUSL)) {
-	    return MUSL;
-	  }
-	  return null;
-	};
-
-	const familyFromInterpreterPath = (path) => {
-	  if (path) {
-	    if (path.includes('/ld-musl-')) {
-	      return MUSL;
-	    } else if (path.includes('/ld-linux-')) {
-	      return GLIBC;
-	    }
-	  }
-	  return null;
-	};
-
-	const getFamilyFromLddContent = (content) => {
-	  content = content.toString();
-	  if (content.includes('musl')) {
-	    return MUSL;
-	  }
-	  if (content.includes('GNU C Library')) {
-	    return GLIBC;
-	  }
-	  return null;
-	};
-
-	const familyFromFilesystem = async () => {
-	  if (cachedFamilyFilesystem !== undefined) {
-	    return cachedFamilyFilesystem;
-	  }
-	  cachedFamilyFilesystem = null;
-	  try {
-	    const lddContent = await readFile(LDD_PATH);
-	    cachedFamilyFilesystem = getFamilyFromLddContent(lddContent);
-	  } catch (e) {}
-	  return cachedFamilyFilesystem;
-	};
-
-	const familyFromFilesystemSync = () => {
-	  if (cachedFamilyFilesystem !== undefined) {
-	    return cachedFamilyFilesystem;
-	  }
-	  cachedFamilyFilesystem = null;
-	  try {
-	    const lddContent = readFileSync(LDD_PATH);
-	    cachedFamilyFilesystem = getFamilyFromLddContent(lddContent);
-	  } catch (e) {}
-	  return cachedFamilyFilesystem;
-	};
-
-	const familyFromInterpreter = async () => {
-	  if (cachedFamilyInterpreter !== undefined) {
-	    return cachedFamilyInterpreter;
-	  }
-	  cachedFamilyInterpreter = null;
-	  try {
-	    const selfContent = await readFile(SELF_PATH);
-	    const path = interpreterPath(selfContent);
-	    cachedFamilyInterpreter = familyFromInterpreterPath(path);
-	  } catch (e) {}
-	  return cachedFamilyInterpreter;
-	};
-
-	const familyFromInterpreterSync = () => {
-	  if (cachedFamilyInterpreter !== undefined) {
-	    return cachedFamilyInterpreter;
-	  }
-	  cachedFamilyInterpreter = null;
-	  try {
-	    const selfContent = readFileSync(SELF_PATH);
-	    const path = interpreterPath(selfContent);
-	    cachedFamilyInterpreter = familyFromInterpreterPath(path);
-	  } catch (e) {}
-	  return cachedFamilyInterpreter;
-	};
-
-	/**
-	 * Resolves with the libc family when it can be determined, `null` otherwise.
-	 * @returns {Promise<?string>}
-	 */
-	const family = async () => {
-	  let family = null;
-	  if (isLinux()) {
-	    family = await familyFromInterpreter();
-	    if (!family) {
-	      family = await familyFromFilesystem();
-	      if (!family) {
-	        family = familyFromReport();
-	      }
-	      if (!family) {
-	        const out = await safeCommand();
-	        family = familyFromCommand(out);
-	      }
-	    }
-	  }
-	  return family;
-	};
-
-	/**
-	 * Returns the libc family when it can be determined, `null` otherwise.
-	 * @returns {?string}
-	 */
-	const familySync = () => {
-	  let family = null;
-	  if (isLinux()) {
-	    family = familyFromInterpreterSync();
-	    if (!family) {
-	      family = familyFromFilesystemSync();
-	      if (!family) {
-	        family = familyFromReport();
-	      }
-	      if (!family) {
-	        const out = safeCommandSync();
-	        family = familyFromCommand(out);
-	      }
-	    }
-	  }
-	  return family;
-	};
-
-	/**
-	 * Resolves `true` only when the platform is Linux and the libc family is not `glibc`.
-	 * @returns {Promise<boolean>}
-	 */
-	const isNonGlibcLinux = async () => isLinux() && await family() !== GLIBC;
-
-	/**
-	 * Returns `true` only when the platform is Linux and the libc family is not `glibc`.
-	 * @returns {boolean}
-	 */
-	const isNonGlibcLinuxSync = () => isLinux() && familySync() !== GLIBC;
-
-	const versionFromFilesystem = async () => {
-	  if (cachedVersionFilesystem !== undefined) {
-	    return cachedVersionFilesystem;
-	  }
-	  cachedVersionFilesystem = null;
-	  try {
-	    const lddContent = await readFile(LDD_PATH);
-	    const versionMatch = lddContent.match(RE_GLIBC_VERSION);
-	    if (versionMatch) {
-	      cachedVersionFilesystem = versionMatch[1];
-	    }
-	  } catch (e) {}
-	  return cachedVersionFilesystem;
-	};
-
-	const versionFromFilesystemSync = () => {
-	  if (cachedVersionFilesystem !== undefined) {
-	    return cachedVersionFilesystem;
-	  }
-	  cachedVersionFilesystem = null;
-	  try {
-	    const lddContent = readFileSync(LDD_PATH);
-	    const versionMatch = lddContent.match(RE_GLIBC_VERSION);
-	    if (versionMatch) {
-	      cachedVersionFilesystem = versionMatch[1];
-	    }
-	  } catch (e) {}
-	  return cachedVersionFilesystem;
-	};
-
-	const versionFromReport = () => {
-	  const report = getReport();
-	  if (report.header && report.header.glibcVersionRuntime) {
-	    return report.header.glibcVersionRuntime;
-	  }
-	  return null;
-	};
-
-	const versionSuffix = (s) => s.trim().split(/\s+/)[1];
-
-	const versionFromCommand = (out) => {
-	  const [getconf, ldd1, ldd2] = out.split(/[\r\n]+/);
-	  if (getconf && getconf.includes(GLIBC)) {
-	    return versionSuffix(getconf);
-	  }
-	  if (ldd1 && ldd2 && ldd1.includes(MUSL)) {
-	    return versionSuffix(ldd2);
-	  }
-	  return null;
-	};
-
-	/**
-	 * Resolves with the libc version when it can be determined, `null` otherwise.
-	 * @returns {Promise<?string>}
-	 */
-	const version = async () => {
-	  let version = null;
-	  if (isLinux()) {
-	    version = await versionFromFilesystem();
-	    if (!version) {
-	      version = versionFromReport();
-	    }
-	    if (!version) {
-	      const out = await safeCommand();
-	      version = versionFromCommand(out);
-	    }
-	  }
-	  return version;
-	};
-
-	/**
-	 * Returns the libc version when it can be determined, `null` otherwise.
-	 * @returns {?string}
-	 */
-	const versionSync = () => {
-	  let version = null;
-	  if (isLinux()) {
-	    version = versionFromFilesystemSync();
-	    if (!version) {
-	      version = versionFromReport();
-	    }
-	    if (!version) {
-	      const out = safeCommandSync();
-	      version = versionFromCommand(out);
-	    }
-	  }
-	  return version;
-	};
-
-	detectLibc = {
-	  GLIBC,
-	  MUSL,
-	  family,
-	  familySync,
-	  isNonGlibcLinux,
-	  isNonGlibcLinuxSync,
-	  version,
-	  versionSync
-	};
-	return detectLibc;
-}
-
-var detectLibcExports = requireDetectLibc();
-
-const isWindows = (() => {
-    switch (platform()) {
-        case 'win32':
-            return true;
-        default:
-            return false;
-    }
-})();
-const PLATFORM_FILE_EXTENSION = isWindows ? '.exe' : '';
-/**
- * A properly formed string for concatenation for finding an asset to download.
- *
- * Undefined on platforms GLI does not support installation on.
- */
-const PLATFORM_OS_IDENTIFIER = (() => {
-    switch (platform()) {
-        case 'darwin':
-            return 'osx';
-        case 'win32':
-            return 'win';
-        case 'linux': {
-            return detectLibcExports.isNonGlibcLinuxSync() ? 'linux-musl' : 'linux';
-        }
-        default:
-            return undefined;
-    }
-})();
-/**
- * A properly formed string for concatenation for finding an asset to download.
- *
- * Undefined on architectures GLI does not support installation on.
- */
-const PLATFORM_ARCH_IDENTIFIER = (() => {
-    const a = arch();
-    switch (a) {
-        case 'arm':
-        case 'arm64':
-        case 'x64':
-            return a;
-        case 'ia32':
-            return 'x86';
-        default:
-            return undefined;
-    }
-})();
-const REQUIRED_GLI_BINARY_NAME = (() => {
-    return `gli-${PLATFORM_OS_IDENTIFIER}-${PLATFORM_ARCH_IDENTIFIER}${PLATFORM_FILE_EXTENSION}`;
-})();
-
-// from https://github.com/terascope/fetch-github-release/blob/master/src/download.ts
-const { GITHUB_TOKEN } = process.env;
-function getRequestOptions(urlString) {
-    const url = require$$1$3.parse(urlString);
-    const headers = {
-        Accept: 'application/octet-stream',
-        'User-Agent': '@GreemDev/setup-gli-action'
-    };
-    if (GITHUB_TOKEN) {
-        headers.Authorization = `token ${GITHUB_TOKEN}`;
-    }
-    return Object.assign({}, url, { headers });
-}
-function download(url, w, progress = () => { }) {
-    return new Promise((resolve, reject) => {
-        let protocol = /^https:/.exec(url) ? https$1 : require$$2;
-        const options = getRequestOptions(url);
-        progress(0);
-        protocol
-            .get(options, (res1) => {
-            protocol = /^https:/.exec(res1.headers.location) ? https$1 : require$$2;
-            protocol
-                .get(res1.headers.location, (res2) => {
-                const total = parseInt(res2.headers['content-length'] ?? '0', 10);
-                let completed = 0;
-                res2.pipe(w);
-                res2.on('data', (data) => {
-                    completed += data.length;
-                    progress(completed / total);
-                });
-                res2.on('progress', progress);
-                res2.on('error', reject);
-                res2.on('end', () => {
-                    w.on('close', () => {
-                        resolve();
-                    });
-                });
-            })
-                .on('error', reject);
+async function getRelease() {
+    const octokit = getOctokit(Inputs.token);
+    const desiredVersion = Inputs.version;
+    info(`Requesting version ${desiredVersion}`);
+    const release = desiredVersion === undefined || desiredVersion === 'latest'
+        ? await octokit.rest.repos.getLatestRelease({
+            owner: 'GreemDev',
+            repo: 'GLI'
         })
-            .on('error', reject);
-    });
+        : await octokit.rest.repos.getReleaseByTag({
+            owner: 'GreemDev',
+            repo: 'GLI',
+            tag: Inputs.version
+        });
+    if (!release || !release.data) {
+        throw new Error(`Could not find a version of GLI matching '${Inputs.version}'.`);
+    }
+    return release;
+}
+function findAsset(release) {
+    const foundAsset = release.data.assets.find((asset) => asset.name === REQUIRED_GLI_BINARY_NAME);
+    if (foundAsset === undefined) {
+        throw new Error(`Could not find a GLI binary matching ${REQUIRED_GLI_BINARY_NAME} on ${release.data.html_url}`);
+    }
+    else {
+        // Log required binary for debugging sessions
+        debug(`Found asset: ${foundAsset.name}`);
+    }
+    return foundAsset;
+}
+function setupPaths() {
+    const home = isWindows
+        ? join(process$1.env['SystemDrive'], process$1.env['HOMEPATH'])
+        : process$1.env['HOME'];
+    const parentDir = join(home, '.bin');
+    mkdirP(parentDir);
+    const outPath = join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`);
+    if (fs$1.existsSync(outPath)) {
+        debug(`Found GLI installation; overwriting`);
+        fs$1.rmSync(outPath);
+    }
+    return { parent: parentDir, tool: outPath };
 }
 
-const inputs = new CoreInputs();
 /**
  * The main function for the action.
  *
@@ -33701,45 +33745,14 @@ const inputs = new CoreInputs();
  */
 async function run() {
     try {
-        const octokit = getOctokit(inputs.token);
-        const desiredVersion = inputs.version;
-        info(`Requesting version ${desiredVersion}`);
-        const release = desiredVersion === undefined || desiredVersion === 'latest'
-            ? await octokit.rest.repos.getLatestRelease({
-                owner: 'GreemDev',
-                repo: 'GLI'
-            })
-            : await octokit.rest.repos.getReleaseByTag({
-                owner: 'GreemDev',
-                repo: 'GLI',
-                tag: inputs.version
-            });
-        if (!release || !release.data) {
-            setFailed(`Could not find a version of GLI matching '${inputs.version}'.`);
-            return;
-        }
+        const release = await getRelease();
         info(`Retrieved version ${release.data.tag_name}`);
-        const foundAsset = release.data.assets.find((asset) => asset.name === REQUIRED_GLI_BINARY_NAME);
-        if (foundAsset === undefined) {
-            setFailed(`Could not find a GLI binary matching ${REQUIRED_GLI_BINARY_NAME} on ${release.data.html_url}`);
-            return;
-        }
-        else {
-            // Log required binary for debugging sessions
-            debug(`Found asset: ${foundAsset.name}`);
-        }
-        info(`Found asset ${foundAsset.name}`);
-        const home = isWindows
-            ? join(process$1.env['SystemDrive'], process$1.env['HOMEPATH'])
-            : process$1.env['HOME'];
-        const parentDir = join(home, '.bin');
-        mkdirP(parentDir);
-        const outPath = join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`);
-        if (fs$1.existsSync(outPath)) {
-            debug(`Found GLI installation; overwriting`);
-            fs$1.rmSync(outPath);
-        }
-        const gliStream = fs$1.createWriteStream(join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`), { flags: 'wx', autoClose: true });
+        const foundAsset = findAsset(release);
+        const { parent, tool } = setupPaths();
+        const gliStream = fs$1.createWriteStream(tool, {
+            flags: 'wx',
+            autoClose: true
+        });
         await download(foundAsset.browser_download_url, gliStream).catch((error) => {
             let err = 'An error occurred requesting to download GLI: ';
             if (error instanceof AggregateError) {
@@ -33753,10 +33766,10 @@ async function run() {
             }
             throw new Error(err);
         });
-        addPath(parentDir);
-        setOutput('tool_path', gliStream.path);
+        addPath(parent);
+        setOutput('tool_path', tool);
         if (!isWindows) {
-            fs$1.chmodSync(gliStream.path, 0o775);
+            fs$1.chmodSync(tool, 0o775);
         }
     }
     catch (error) {

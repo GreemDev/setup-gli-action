@@ -3,13 +3,23 @@
 
 // octokit + plugins
 import { Octokit } from '@octokit/core'
-import { restEndpointMethods } from '@octokit/plugin-rest-endpoint-methods'
+import {
+  restEndpointMethods,
+  RestEndpointMethodTypes
+} from '@octokit/plugin-rest-endpoint-methods'
+import * as Types from '@octokit/openapi-types'
 import { paginateRest } from '@octokit/plugin-paginate-rest'
 
 import * as http from 'http'
 import * as httpClient from '@actions/http-client'
 import type { OctokitOptions, OctokitPlugin } from '@octokit/core/types'
 import { ProxyAgent, fetch } from 'undici'
+
+export type GitHubRelease =
+  RestEndpointMethodTypes['repos']['getLatestRelease']['response']
+
+export type GitHubReleaseAsset = // what the fuck
+  Types.paths['/repos/{owner}/{repo}/releases/assets/{asset_id}']['get']['responses']['200']['content']['application/json']
 
 /**
  * Returns a hydrated octokit ready to use for GitHub Actions
