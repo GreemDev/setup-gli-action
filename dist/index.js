@@ -33725,7 +33725,7 @@ function setupPaths() {
     const home = isWindows
         ? join(process$1.env['SystemDrive'], process$1.env['HOMEPATH'])
         : process$1.env['HOME'];
-    const parentDir = join(home, '.bin');
+    const parentDir = home === '/root' ? '/usr/bin' : join(home, '.bin');
     mkdirP(parentDir);
     const outPath = join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`);
     if (fs$1.existsSync(outPath)) {
