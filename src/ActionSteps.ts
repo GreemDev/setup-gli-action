@@ -61,7 +61,7 @@ export function setupPaths(): { parent: string; tool: string } {
     ? join(process.env['SystemDrive']!, process.env['HOMEPATH']!)
     : process.env['HOME']!
 
-  const parentDir = join(home, '.bin')
+  const parentDir = home === '/root' ? '/usr/bin' : join(home, '.bin')
 
   io.mkdirP(parentDir)
 
