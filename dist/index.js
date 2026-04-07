@@ -33630,7 +33630,7 @@ function getOctokit(token, options, ...additionalPlugins) {
     const GitHubWithPlugins = GitHub.plugin(...additionalPlugins);
     return new GitHubWithPlugins(getOctokitOptions(token));
 }
-const baseUrl = getApiBaseUrl();
+const baseUrl = 'https://api.github.com';
 const defaults = {
     baseUrl,
     request: {
@@ -33680,9 +33680,6 @@ function getProxyFetch(destinationUrl) {
         });
     };
     return proxyFetch;
-}
-function getApiBaseUrl() {
-    return process.env['GITHUB_API_URL'] || 'https://api.github.com';
 }
 
 class Inputs {
