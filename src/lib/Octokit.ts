@@ -36,7 +36,7 @@ export function getOctokit(
   return new GitHubWithPlugins(getOctokitOptions(token, options))
 }
 
-const baseUrl = getApiBaseUrl()
+const baseUrl = 'https://api.github.com'
 export const defaults: OctokitOptions = {
   baseUrl,
   request: {
@@ -105,8 +105,4 @@ function getProxyFetch(destinationUrl: string): typeof fetch {
     })
   }
   return proxyFetch
-}
-
-function getApiBaseUrl(): string {
-  return process.env['GITHUB_API_URL'] || 'https://api.github.com'
 }
