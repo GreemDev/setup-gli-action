@@ -16,7 +16,7 @@ export async function run(): Promise<void> {
 
     const foundAsset = ActionSteps.findAsset(release)
 
-    const { parent, tool } = ActionSteps.setupPaths()
+    const { parent, tool } = await ActionSteps.setupPaths()
 
     const gliStream = fs.createWriteStream(tool, {
       flags: 'wx',

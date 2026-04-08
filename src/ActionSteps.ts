@@ -56,14 +56,14 @@ export function findAsset(release: GitHubRelease): GitHubReleaseAsset {
   return foundAsset
 }
 
-export function setupPaths(): { parent: string; tool: string } {
+export async function setupPaths(): Promise<{ parent: string; tool: string }> {
   const home = isWindows
     ? join(process.env['SystemDrive']!, process.env['HOMEPATH']!)
     : process.env['HOME']!
 
   const parentDir = home === '/root' ? '/usr/bin' : join(home, '.bin')
 
-  io.mkdirP(parentDir)
+  await io.mkdirP(parentDir)
 
   const outPath = join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`)
 

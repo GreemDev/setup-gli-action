@@ -33721,12 +33721,12 @@ function findAsset(release) {
     }
     return foundAsset;
 }
-function setupPaths() {
+async function setupPaths() {
     const home = isWindows
         ? join(process$1.env['SystemDrive'], process$1.env['HOMEPATH'])
         : process$1.env['HOME'];
     const parentDir = home === '/root' ? '/usr/bin' : join(home, '.bin');
-    mkdirP(parentDir);
+    await mkdirP(parentDir);
     const outPath = join(parentDir, `gli${PLATFORM_FILE_EXTENSION}`);
     if (fs$1.existsSync(outPath)) {
         debug(`Found GLI installation; overwriting`);
@@ -33745,7 +33745,7 @@ async function run() {
         const release = await getRelease();
         info(`Retrieved version ${release.data.tag_name}`);
         const foundAsset = findAsset(release);
-        const { parent, tool } = setupPaths();
+        const { parent, tool } = await setupPaths();
         const gliStream = fs$1.createWriteStream(tool, {
             flags: 'wx',
             autoClose: true

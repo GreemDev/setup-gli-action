@@ -1,7 +1,7 @@
 {
   "name": "setup-gli-action",
   "description": "Setup your workflow with a version of the GLI command-line utility.",
-  "version": "v1.1.1",
+  "version": "v1.1.2",
   "author": "GreemDev",
   "type": "module",
   "private": false,
